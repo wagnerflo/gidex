@@ -1,0 +1,6 @@
+*.pyc
+.pyenv/
+__pycache__/
+gidex/assets/
+!gidex/assets/ui.html
+node_modules/

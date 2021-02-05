@@ -1,0 +1,35 @@
+@import 'svelte-materialify/src/styles/variables';
+
+:global(.browser-frame) {
+  border-width: 1px;
+  border-style: solid;
+  border-color: lighten($primary-color, 30%);
+
+  :global(> .frame-header) {
+    background-color: lighten($primary-color, 48%);
+  }
+}
+
+:global(.color-icon) {
+  color: lighten($primary-color, 30%);
+}
+
+:global(a.filename) {
+  text-decoration: none;
+  font-family: monospace;
+}
+
+:global(svg.text-inline) {
+  position: relative;
+  top: .125em;
+}
+
+:global(.markdown) {
+  @each $heading in 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' {
+    $value_map: map-get($headings, $heading);
+    :global(#{$heading}) {
+      font-size: calc(.5 * #{map-get($value_map, 'size')});
+      line-height: calc(.5 * #{map-get($value_map, 'line-height')});
+    }
+  }
+}

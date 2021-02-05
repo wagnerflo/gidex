@@ -1,0 +1,7 @@
+{
+  "API_ACCEPT": "application/json",
+  "API_PROFILE": "<https://github.com/wagnerflo/gidex/>",
+  "SCRIPT_NAME": "ui.js",
+  "SCRIPT_NAME_MIN": "ui.min.js",
+  "CSS_NAME": "ui.css"
+}

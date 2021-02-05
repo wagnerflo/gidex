@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>gidex</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script type="text/javascript">
+      const request = new XMLHttpRequest();
+      request.open('HEAD', document.location);
+      request.addEventListener('load', function(evt) {
+        const script_name = request.getResponseHeader('gidex-script-name');
+        const ui_root = request.getResponseHeader('gidex-ui-root');
+        const api_root = request.getResponseHeader('gidex-api-root');
+        const static_root = request.getResponseHeader('gidex-static-root');
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = static_root + script_name;
+        script.dataset.ui_root = ui_root;
+        script.dataset.api_root = api_root;
+        script.dataset.static_root = static_root;
+        document.body.appendChild(script);
+      });
+      request.send();
+    </script>
+  </body>
+</html>
