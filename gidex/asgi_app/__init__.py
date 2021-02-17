@@ -11,7 +11,7 @@ from starlette.routing import Route
 
 from . import convertors
 from .util import stream_file
-from .api import ApiRoute
+from .api import ApiRoutes
 from ..consts import (
     SCRIPT_NAME,
     SCRIPT_NAME_MIN,
@@ -72,8 +72,8 @@ class BaseApplication(Starlette):
                 )
             )
 
-        self.routes.append(
-            ApiRoute(
+        self.routes.extend(
+            ApiRoutes(
                 '/',
                 self.repository_route_prefix,
                 self.get_repository,

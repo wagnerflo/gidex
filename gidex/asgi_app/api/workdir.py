@@ -14,11 +14,11 @@ def resolve_path(base, rel):
 
 def path_to_object(request, base, rel, with_path=True, recurse=0):
     path,rel = resolve_path(base, rel)
-    url = request.url_for('api_contents', repo='', path=nodot(rel))
+    nrel = nodot(rel)
     obj = dict(
         name = rel.name,
-        url = url,
-        raw = url + '?raw',
+        url = request.url_for('api_stat', repo='', ref=None, path=nrel),
+        raw = request.url_for('api_raw', repo='', ref=None, path=nrel),
     )
 
     if with_path:
@@ -27,7 +27,7 @@ def path_to_object(request, base, rel, with_path=True, recurse=0):
                 dict(
                     name = p.name,
                     url = request.url_for(
-                        'api_contents', repo='', path=p.name
+                        'api_stat', repo='', ref=None, path=p.name
                     ),
                 )
                 for p in reversed(rel.parents)

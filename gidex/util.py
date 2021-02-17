@@ -32,11 +32,12 @@ def nodot(path):
 def dir_sorted(iterator):
     return sorted(iterator, key=lambda i: (not i.is_dir(), i.name))
 
-def guess_mime(filename, fp):
+def guess_mime(filename, fp=None):
     mime,_ = mimedb.guess_type(filename)
     if mime:
         return mime
-    return guess_from_bytes(fp.read(2048), mime=True)
+    if fp:
+        return guess_from_bytes(fp.read(2048), mime=True)
 
 def as_utc(dt):
     return dt.astimezone(timezone.utc)

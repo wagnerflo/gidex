@@ -1,5 +1,4 @@
 <script>
-  export let object;
   export let content;
 
   import { ProgressCircular } from 'svelte-materialify/src';

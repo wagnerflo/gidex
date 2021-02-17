@@ -1,5 +1,4 @@
 <script>
-  export let object;
   export let content;
 
   export function matches(str) {
