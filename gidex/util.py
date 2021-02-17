@@ -1,3 +1,4 @@
+from datetime import timezone
 from io import TextIOWrapper
 from mimetypes import (
     MimeTypes,
@@ -36,3 +37,6 @@ def guess_mime(filename, fp):
     if mime:
         return mime
     return guess_from_bytes(fp.read(2048), mime=True)
+
+def as_utc(dt):
+    return dt.astimezone(timezone.utc)
