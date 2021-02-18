@@ -1,47 +1,28 @@
-from collections.abc import Iterable
-from dataclasses import dataclass,asdict
 from re import compile
 from starlette.convertors import (
     CONVERTOR_TYPES,
     Convertor,
 )
 
-@dataclass(frozen=True)
-class ref:
-    type: str
-    name: str
-
-    def asdict(self):
-        return asdict(self)
-
-class RepositoryConvertor(Convertor):
-    regex = '.*(?=/:)'
-
-    def convert(self, value):
-        return str(value)
-
-    def to_string(self, value):
-        value = str(value)
-        assert '/:' not in value, 'May not contain path part starting with colon'
-        return value
+from .util import ref,head,tag,sha,workdir
 
 class RefConvertor(Convertor):
-    value_regex = ':(?:(?:([tsb]):)?([^:]+)|):'
-    re = compile(value_regex)
-    regex = value_regex + '(?=/)'
+    regex = '(?:(head|tag)\/([^:]+)|(sha)\/([0-9a-fA-F]{5,40})|(workdir))?:'
+    re = compile(regex)
 
     def convert(self, value):
-        return ref(*self.re.fullmatch(value).groups())
+        t1,n1,t2,n2,t3 = self.re.fullmatch(value).groups()
+        type = t1 or t2 or t3
+        name = n1 or n2
+        if type is None:
+            type = 'workdir'
+        return globals()[type](name)
 
     def to_string(self, value):
-        assert not isinstance(value, str), 'May not be a string'
-        if value is None:
-            return '::'
-        if isinstance(value, dict):
-            value = ref(**value)
-        elif isinstance(value, Iterable):
-            value = ref(*value)
-        return f':{value.type}:{value.name}:'
+        assert isinstance(value, ref), 'Must be ref or subclass'
+        if isinstance(value, workdir):
+            return 'workdir:'
+        return f'{value.type}/{value.name}:'
 
 class EmptyConvertor(Convertor):
     regex = ''
@@ -53,7 +34,6 @@ class EmptyConvertor(Convertor):
         return ''
 
 CONVERTOR_TYPES.update(
-    repo = RepositoryConvertor(),
     ref = RefConvertor(),
     empty = EmptyConvertor(),
 )

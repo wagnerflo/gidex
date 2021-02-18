@@ -116,7 +116,7 @@ class BaseApplication(Starlette):
         pass
 
 class Application(BaseApplication):
-    repository_route_prefix = '{repo:repo}/'
+    repository_route_prefix = '{repo:path}/'
 
     def __init__(self, index=MISSING, api_only=MISSING, api_uri=MISSING, debug=MISSING):
         self._index = index

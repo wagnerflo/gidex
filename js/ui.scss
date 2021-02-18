@@ -1,4 +1,9 @@
 @import 'svelte-materialify/src/styles/variables';
+@import 'svelte-materialify/src/styles/tools/colors';
+
+:global(body) {
+  overflow-y: scroll;
+}
 
 :global(.browser-frame) {
   border-width: 1px;
@@ -12,6 +17,22 @@
 
 :global(.color-icon) {
   color: lighten($primary-color, 30%);
+}
+
+:global(.table-icon) {
+  position: relative;
+  top: 2px;
+}
+
+:global(td) {
+  &.shrink {
+    width: 0.1%;
+    white-space: nowrap;
+  }
+}
+
+:global(.s-table__wrapper.stripped > table > tr:nth-child(even)) {
+  background-color: material-color('grey', 'lighten-3');;
 }
 
 :global(a.filename) {

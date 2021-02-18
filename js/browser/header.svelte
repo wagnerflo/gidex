@@ -12,7 +12,7 @@
          } from 'svelte-octicons';
 
   const ref_icon_map = {
-    branch: GitBranch16,
+    head: GitBranch16,
     tag: Tag16,
     workdir: FileDirectory16,
   }
@@ -39,23 +39,41 @@
       <div slot="tabs">
         <Tab>Branches</Tab>
         <Tab>Tags</Tab>
+        {#if !repository.is_bare}
+          <Tab>Workdir</Tab>
+        {/if}
       </div>
       <div>
         <TabContent>
           <List nav dense>
             {#each repository.heads as head}
               <ListItem>
-                <span slot="prepend">
-                  
-                </span>
+                <span slot="prepend"></span>
                 <Link url={ head.url }>{ head.name }</Link>
               </ListItem>
             {/each}
           </List>
         </TabContent>
         <TabContent>
-          def
+          <List nav dense>
+            {#each repository.tags as tag}
+              <ListItem>
+                <span slot="prepend"></span>
+                <Link url={ tag.url }>{ tag.name }</Link>
+              </ListItem>
+            {/each}
+            {#if !repository.tags.length}
+              <ListItem>
+                nothing to show
+              </ListItem>
+            {/if}
+          </List>
         </TabContent>
+        {#if !repository.is_bare}
+          <TabContent>
+
+          </TabContent>
+        {/if}
       </div>
     </Tabs>
   </Menu>

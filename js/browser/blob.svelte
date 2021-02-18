@@ -30,14 +30,16 @@
 <RepositoryHeader repository={ repository } />
 
 <PathFrame object={ object }>
-  {#await content(object.raw)}
-    <div class="ma-3 align-self-center">
-      <ProgressCircular indeterminate={ true } size={ 24 } width={ 2 } />
-    </div>
-  {:then data}
-    <svelte:component
-      this={ renderers.find(r => r.prototype.matches(object.mime_type)) }
-      object={ object }
-      content={ data } />
-  {/await}
+  <slot slot="body">
+    {#await content(object.raw)}
+      <div class="ma-3 align-self-center">
+        <ProgressCircular indeterminate={ true } size={ 24 } width={ 2 } />
+      </div>
+    {:then data}
+      <svelte:component
+        this={ renderers.find(r => r.prototype.matches(object.mime_type)) }
+        object={ object }
+        content={ data } />
+    {/await}
+  </slot>
 </PathFrame>

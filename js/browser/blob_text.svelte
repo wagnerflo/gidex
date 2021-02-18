@@ -2,7 +2,7 @@
   export let content;
 
   export function matches(str) {
-    return /^text\//.test(str);
+    return /^application\/(json|javascript)|text\//.test(str);
   }
 </script>
 

@@ -89,7 +89,7 @@ function _uiify(url, api_root, ui_root) {
     throw 'Invalid URL';
   }
 
-  return new URL(url.substring(api_root.length), ui_root);
+  return new URL(url.substring(api_root.length - 1), ui_root);
 
 }
 

@@ -1,5 +1,5 @@
 from datetime import timezone
-from io import TextIOWrapper
+from io import TextIOWrapper,RawIOBase
 from mimetypes import (
     MimeTypes,
     knownfiles as known_mime_files,
@@ -41,3 +41,18 @@ def guess_mime(filename, fp=None):
 
 def as_utc(dt):
     return dt.astimezone(timezone.utc)
+
+class OStreamReader(RawIOBase):
+    def __init__(self, stream):
+        self.stream = stream
+
+    def readable(self):
+        return True
+
+    def readinto(self, b):
+        data = self.stream.read(len(b))
+        if not data:
+            return 0
+        l = len(data)
+        b[:l] = data
+        return l

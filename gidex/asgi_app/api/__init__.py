@@ -4,13 +4,20 @@ from starlette.exceptions import HTTPException
 from starlette.responses import Response,JSONResponse,StreamingResponse
 from starlette.routing import Route,Match
 
-from . import workdir
+from . import (
+    workdir as from_workdir,
+    repository as from_repository,
+)
 from ..util import (
     stream_file,
+    head,
+    tag,
+    workdir,
 )
 from ...util import (
     guess_mime,
     BreakoutError,
+    OStreamReader,
 )
 from ...consts import (
     API_ACCEPT,
@@ -28,21 +35,22 @@ class RepositoryResponse(JSONResponse):
         repo_name = request.scope.get('repo_name')
         ref = request.scope.get('ref')
         route = request.scope.get('route')
-        print(
-            route.reverse(request, ref=('b', 'abc'))
-        )
         super().__init__(
             dict(
                 object = object,
                 repository = dict(
                     name = repo_name,
                     is_bare = repo.bare,
+                    workdir = route.reverse(request, ref=workdir(None)),
                     heads = [
                         dict(
                             name = h.name,
-                            url = route.reverse(request, ref=('b', h.name)),
+                            url = route.reverse(request, ref=head(h.name)),
                         )
                         for h in repo.heads
+                    ],
+                    tags = [
+
                     ],
                     ref = ref.asdict(),
                 ),
@@ -130,7 +138,7 @@ async def raw(request, repo, repo_name, ref):
         if repo.bare:
             raise HTTPException(404)
 
-        path,_ = workdir.resolve_path(
+        path,_ = from_workdir.resolve_path(
             repo.working_tree_dir,
             request.path_params['path'],
         )
@@ -138,6 +146,14 @@ async def raw(request, repo, repo_name, ref):
             content=stream_file(path.open, 'rb'),
             media_type=guess_mime(path.name),
         )
+
+    blob,_ = from_repository.resolve_path(
+        repo, ref, request.path_params['path']
+    )
+    return StreamingResponse(
+        content=stream_file(OStreamReader, blob.data_stream),
+        media_type=guess_mime(blob.name),
+    )
 
 async def stat(request, repo, repo_name, ref):
     if not ref.name:
@@ -147,12 +163,25 @@ async def stat(request, repo, repo_name, ref):
         try:
             return RepositoryResponse(
                 request,
-                workdir.path_to_object(
+                from_workdir.path_to_object(
                     request,
                     repo.working_tree_dir,
                     request.path_params['path'],
+                    repo,
                     recurse=1,
                 ),
             )
         except BreakoutError:
             raise HTTPException(404)
+
+    return RepositoryResponse(
+        request,
+        from_repository.path_to_object(
+            request,
+            request.path_params['path'],
+            ref,
+            repo,
+            repo_name,
+            recurse=1,
+        ),
+    )

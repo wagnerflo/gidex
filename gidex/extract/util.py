@@ -4,6 +4,8 @@ from io import BytesIO,BufferedReader,RawIOBase,TextIOWrapper
 from re import compile as re_compile
 from operator import sub
 
+from ..util import OStreamReader
+
 detector = UniversalDetector()
 extractors = {}
 
@@ -72,18 +74,3 @@ class ConcatReader(RawIOBase):
             self.advance()
 
         return 0
-
-class OStreamReader(RawIOBase):
-    def __init__(self, stream):
-        self.stream = stream
-
-    def readable(self):
-        return True
-
-    def readinto(self, b):
-        data = self.stream.read(len(b))
-        if not data:
-            return 0
-        l = len(data)
-        b[:l] = data
-        return l
